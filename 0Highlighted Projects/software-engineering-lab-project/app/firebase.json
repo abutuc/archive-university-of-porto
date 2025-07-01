@@ -1,0 +1,41 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "tapa-buracos",
+          "appId": "1:89050510585:android:5669b1ed6b4a118dad9e28",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "tapa-buracos",
+          "configurations": {
+            "android": "1:89050510585:android:5669b1ed6b4a118dad9e28",
+            "ios": "1:89050510585:ios:81c28b2f07b4ce33ad9e28",
+            "web": "1:89050510585:web:08e04edeb93c3abaad9e28"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+
+  "storage": {
+    "rules": "storage.rules"
+  }
+}

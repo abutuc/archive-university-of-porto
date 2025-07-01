@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "89050510585",
+    "project_id": "tapa-buracos",
+    "storage_bucket": "tapa-buracos.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:89050510585:android:5669b1ed6b4a118dad9e28",
+        "android_client_info": {
+          "package_name": "com.tapaburacos.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCXyNSn-ib98qGyDXHnbyBkxRoMya2egI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,172 @@
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ses
+      POSTGRES_PASSWORD: ses
+      POSTGRES_DB: ses
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_file:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ses"]
+      interval: 1s
+      timeout: 5s
+      retries: 20
+    networks:
+      - backend
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:9000/minio/health/live || exit 1",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+    networks:
+      - backend
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "5005:5005" # Debug port
+    working_dir: /app
+    entrypoint: ["mvn", "clean", "quarkus:dev"]
+    volumes:
+      - ./backend:/app
+      - maven-repo:/root/.m2
+      - ./public_html:/app/public_html
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:8080/q/health/ready || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+    depends_on:
+      database:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      clamav:
+        condition: service_healthy
+    networks:
+      - backend
+      - frontend
+
+  frontend:
+    build: ./frontend
+    restart: on-failure
+    # ports:
+    #   - "80:80"
+    volumes:
+      - ./frontend:/app
+      - node_modules:/app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - frontend
+
+  reverse-proxy:
+    image: nginx:latest
+    container_name: reverse-proxy
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./public_html:/usr/share/nginx/html/public:ro
+    ports:
+      - "443:443"
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - frontend
+      - backend
+
+  cli:
+    build: ./cli
+    restart: on-failure
+    environment:
+      - API_BASE_URL=https://ses-drive.io/api
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - backend
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./cli/cli.sh:/usr/local/bin/ses:ro
+    ports:
+      - "8765:8765"
+    extra_hosts:
+      - "ses-drive.io:host-gateway"
+
+  sonarqube:
+    image: sonarqube:lts
+    container_name: sonarqube
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://database:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    ports:
+      - "9002:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    networks:
+      - backend
+
+  clamav:
+    image: mkodockx/docker-clamav:alpine
+    container_name: clamav
+    ports:
+      - "3310:3310"
+    restart: always
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "clamdscan", "--version"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_file:
+  minio-data:
+  maven-repo:
+  node_modules: {}
+  sonarqube_data:
+  sonarqube_extensions:
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge

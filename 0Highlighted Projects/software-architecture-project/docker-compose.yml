@@ -1,0 +1,99 @@
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 20s
+      timeout: 10s
+      retries: 20
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+        - 5672:5672
+        - 15672:15672
+    networks:
+      - backend
+
+  backend:
+    build: ./hm-backend/homemaestro
+    restart: on-failure
+    volumes:
+      - ./hm-backend/homemaestro:/app
+      - backend_data:/app/data
+    depends_on:
+      simulation:
+        condition: service_started
+    environment:
+      SPRING_APPLICATION_JSON: '{
+          "spring.datasource.url" : "jdbc:postgresql://database:5432/home-maestro",
+          "spring.datasource.username" : "root",
+          "spring.datasource.password" : "root",
+          "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.PostgreSQLDialect",
+          "spring.jpa.hibernate.ddl-auto" : "update",
+          "springdoc.api-docs.path" : "/api/docs",
+          "springdoc.swagger-ui.path" : "/api/docs",
+          "spring.rabbitmq.host" : "rabbitmq",
+          "spring.rabbitmq.port" : "5672",
+          "spring.rabbitmq.username" : "guest",
+          "spring.rabbitmq.password" : "guest"
+        }'
+    networks:
+      - backend
+      - frontend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.rule=PathPrefix(`/api`)
+      - traefik.http.services.backend.loadbalancer.server.port=8080
+      - traefik.http.routers.backend.entrypoints=web
+
+  frontend:
+    build: ./hm-frontend
+    restart: on-failure
+    volumes:
+      - ./hm-frontend:/app
+      - /app/node_modules
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - frontend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=PathPrefix(`/`)
+      - traefik.http.services.frontend.loadbalancer.server.port=3000
+      - traefik.http.routers.frontend.entrypoints=web
+
+  traefik:
+    image: traefik:v2.11
+    ports:
+      - "80:80"
+      - "8080:8080"
+    depends_on:
+      frontend:
+        condition: service_started
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./proxy/traefik.yml:/etc/traefik/traefik.yml"
+    restart: unless-stopped
+    networks:
+      - backend
+      - frontend
+
+  simulation:
+    build: ./hm-simulation
+    restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - backend
+
+volumes:
+  db_file:
+  backend_data:
+
+networks:
+  backend:
+  frontend:

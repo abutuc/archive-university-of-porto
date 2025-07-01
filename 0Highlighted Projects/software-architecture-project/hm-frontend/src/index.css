@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    /* Color Variables */
+    --background-color: aliceblue;
+    --secondary-background-color: #f9fafb;
+    --color-text: #242424;
+    --color-primary: #3b82f6; /* Light mode primary color */
+    --color-secondary: #dbeafe; /* Light mode secondary color (for hover) */
+    --color-intense: white;
+    /* Font Size Variables */
+    --font-size-h1: 2.25rem;
+    --font-size-h2: 1.875rem;
+    --font-size-h3: 1.5rem;
+    --font-size-h4: 1.25rem;
+    --font-size-h5: 1rem;
+    --font-size-h6: 0.875rem;
+    --font-size-display: 4rem;
+    --font-size-base: 1rem;
+    --font-size-s: 0.875rem;
+    --font-size-xs: 0.75rem;
+    --font-size-label: 0.875rem;
+
+    /* Spacing Variables */
+    --space-xs: 0.25rem;
+    --space-s: 0.5rem;
+    --space-base: 1rem;
+    --space-m: 1.5rem;
+    --space-l: 2rem;
+    --space-xl: 3rem;
+    --space-xxl: 4rem;
+
+    /* Border Radius Variables */
+    --border-radius-none: 0;
+    --border-radius-soft: 0.25rem;
+    --border-radius-rounded: 0.5rem;
+    --border-radius-circle: 50%;
+
+    color-scheme: light dark;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    background-color: var(--background-color);
+    color: var(--color-text);
+}
+
+html, body, #root {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Ensures the height of the entire viewport */
+    display: flex;
+    justify-content: center; /* Centers content horizontally */
+    align-items: center; /* Centers content vertically */
+}
+
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #2e2e2e;
+        --secondary-background-color: #3d3d3d;
+        --color-text: rgba(255, 255, 255, 0.87);
+        --color-primary: #6366f1; /* Dark mode primary color */
+        --color-secondary: #374151; /* Dark mode secondary color (for hover) */
+        --color-intense: #1c1c1c;
+    }
+
+    img {
+        filter: invert(1);
+    }
+}

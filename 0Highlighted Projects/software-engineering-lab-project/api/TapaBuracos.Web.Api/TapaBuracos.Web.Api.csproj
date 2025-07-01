@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<AssemblyVersion>1.0.4.8</AssemblyVersion>
+	<FileVersion>1.0.4.8</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.9.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Coelho.Arc.Thessaloniki\Coelho.Arc.Thessaloniki.csproj" />
+    <ProjectReference Include="..\TapaBuracos.Api.Models\TapaBuracos.Api.Models.csproj" />
+    <ProjectReference Include="..\TapaBuracos.Citizen.Persistence\TapaBuracos.Citizen.Persistence.csproj" />
+    <ProjectReference Include="..\TapaBuracos.Municipality.Persistence\TapaBuracos.Municipality.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

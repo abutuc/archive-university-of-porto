@@ -1,0 +1,35 @@
+{
+    "name": "Tapa-Buracos!",
+    "short_name": "tapa_buracos",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "theme_color": "#hexcode",
+    "description": "For citizens seeking an easy way to report infrastructure and public maintenance issues, and for municipalities aiming to optimize their response processes, 'Tapa-buracos!' is a web and mobile app that enables intuitive issue reporting and ensures structured communication.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
