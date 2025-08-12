@@ -1,0 +1,13 @@
+pytest
+fastapi
+uvicorn
+psycopg2-binary
+sqlalchemy
+python-dotenv
+httpx
+alembic
+python-multipart
+python-jose[cryptography] 
+pytesseract
+pillow
+requests
